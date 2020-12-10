@@ -86,6 +86,25 @@ void audit_results() {
 
 int main()
 {
+
+//	for (int i =0; i < MAX_TEST; i++) {
+//		cout << "\n\ntrial " << i << "\n";
+	thread waiter(doWaiter, 10, "./in4.txt");
+	thread baker1(doBaker, 10);
+//	thread baker2(doBaker, 20);
+//	thread baker3(doBaker, 30);
+//	thread baker4(doBaker, 40);
+
+	waiter.join();
+	baker1.join();
+//	baker2.join();
+//	baker3.join();
+//	baker4.join();
+//	}
+
+	cout << endl;
+	audit_results();
+
 	//TODO your code here
 	return SUCCESS;
 }
