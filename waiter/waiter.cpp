@@ -23,27 +23,24 @@ int Waiter::getNext(ORDER &anOrder){
 
 void Waiter::beWaiter() {
 
-
-	ORDER order;
-	int available_order = getNext(order);
+	ORDER o;
+	int available_order = getNext(o);
 	b_WaiterIsFinished = false;
+
 	while (available_order == SUCCESS) {
 
-		PRINT5("\nWAITER: ", id, " Inserting Order ", order.order_number, " into queue ");
+		PRINT5("\nWAITER: ", id, " Inserting Order ", o.order_number, " into queue ");
 
-		{
-			unique_lock<mutex> lck(mutex_order_outQ);
-			order_in_Q.push(order);
-		}
 
+		unique_lock<mutex> lk(mutex_order_outQ);
+		order_in_Q.push(o);
+
+
+		available_order = getNext(o);
 		cv_order_inQ.notify_all();
-		available_order = getNext(order);
 
 	}
 	b_WaiterIsFinished = true;
-	cv_order_inQ.notify_all();
-
-
 
 }
 

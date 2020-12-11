@@ -53,7 +53,7 @@ void Baker::beBaker() {
 			cv_order_inQ.wait(lck);
 		}
 
-		lck.unlock();
+
 		if (!order_in_Q.empty()) {
 
 			ORDER order;
@@ -63,13 +63,17 @@ void Baker::beBaker() {
 				order_in_Q.pop();
 			}
 
-			bake_and_box(order);
-			order_out_Vector.push_back(order);
+			if (order.order_number > 0) {
+				lck.unlock();
+				bake_and_box(order);
+				lck.lock();
+				order_out_Vector.push_back(order);
+
+			}
+
 		}
 		cv_order_inQ.notify_all();
-
 	}
-
 	cv_order_inQ.notify_all();
 	PRINT3("Baker: ", id, " is done");
 
