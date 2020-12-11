@@ -36,13 +36,13 @@ void Waiter::beWaiter() {
 			order_in_Q.push(order);
 		}
 
-
 		cv_order_inQ.notify_all();
 		available_order = getNext(order);
 
 	}
-	cv_order_inQ.notify_all();
 	b_WaiterIsFinished = true;
+	cv_order_inQ.notify_all();
+
 
 
 }

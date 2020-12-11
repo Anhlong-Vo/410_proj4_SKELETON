@@ -40,25 +40,25 @@ void Baker::bake_and_box(ORDER &anOrder) {
 
 void Baker::beBaker() {
 
-
 	while (true) {
+
 		unique_lock<mutex> lck(mutex_order_inQ);
+
+		if (b_WaiterIsFinished==true && order_in_Q.empty()) {
+			break;
+		}
 
 		while (order_in_Q.empty() && b_WaiterIsFinished == false) {
 			PRINT3("Baker: ", id, " waiting.... ");
 			cv_order_inQ.wait(lck);
 		}
 
-		if (b_WaiterIsFinished==true && order_in_Q.empty()) {
-			break;
-		}
-
-
+		lck.unlock();
 		if (!order_in_Q.empty()) {
-			ORDER order;
 
+			ORDER order;
 			{
-				unique_lock<mutex> lck(mutex_order_outQ);
+				unique_lock<mutex> lk(mutex_order_outQ);
 				order = order_in_Q.front();
 				order_in_Q.pop();
 			}
@@ -68,8 +68,8 @@ void Baker::beBaker() {
 		}
 		cv_order_inQ.notify_all();
 
-
 	}
+
 	cv_order_inQ.notify_all();
 	PRINT3("Baker: ", id, " is done");
 
